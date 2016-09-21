@@ -34,15 +34,17 @@ void Fight::start(){
 
 void Fight::update(){
 
-	// Ferificar condição de ataque
-			// Atualizar ataque
-		Unitset enemies = u->getUnitsInRadius(MaxRange * 32, BWAPI::Filter::IsEnemy);
-		Unit enemy = nullptr;
+		// Ferificar condição de ataque
+		// Atualizar ataque
+		
 
 		if (u->getKillCount() > lastKill) {
 			positions[_lastEnemySelectedID].hp = 0;
 			lastKill = u->getKillCount();
 		}
+
+		Unitset enemies = u->getUnitsInRadius(MaxRange * 32 * 2, BWAPI::Filter::IsEnemy);
+		Unit enemy = nullptr;
 		
 		int health = 9999;
 		// Atacar inimigo com menos vida

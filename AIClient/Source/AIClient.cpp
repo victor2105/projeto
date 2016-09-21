@@ -21,6 +21,7 @@
 #include "EnemiesHealth.h"
 
 using namespace BWAPI;
+using namespace std;
 
 
 void drawStats();
@@ -101,6 +102,7 @@ int main(int argc, const char* argv[])
 	reatreatAction.clear();
 	ActionImp::getInstance().clear();
 
+	cout << "inicio" << endl;
 
 	if (!reinforcement){
 		unit_problem = new UnitProblem<double>();
@@ -198,6 +200,9 @@ int main(int argc, const char* argv[])
         {
           case EventType::MatchEnd:
 			enemy_unit_discovered = false;
+
+			cout << "fim" << endl;
+
 			// TODO: escrever arquivo com os dados de vitoria e derrota
 			if (e.isWinner()){
 				unit_problem->hasWin = true;

@@ -140,12 +140,14 @@ private:
 	void update_actions(const Action<T>* act) {
 		if (act->id() == 0){ // Fight action
 			Broodwar->sendText("Fight");
+			cout << "atacar" << endl;
 			ActionImp::getInstance().action = ActionImp::FIGHT;
 			ActionImp::getInstance().actionFinished = false;
 			Fight::getInstance().start();
 		}
 		else if(act->id() == 1){ // Reatreat action
 			Broodwar->sendText("Reatreat");
+			cout << "recuar" << endl;
 			ActionImp::getInstance().action = ActionImp::REATREAT;
 			ActionImp::getInstance().actionFinished = false;
 		}
