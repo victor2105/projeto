@@ -3,6 +3,7 @@
 #include <map>
 #include <BWAPI.h>
 #include "Fight.h"
+#include <iostream>
 
 using namespace BWAPI;
 using namespace std;
@@ -23,6 +24,11 @@ public:
 	void clean();
 	void reset();
 
+	void unitShow(int, int);
+	void unitHide(int, int);
+	void unitDestroy(int);
+
+
 	static EnemiesHealth & getInstance(){
 		static EnemiesHealth instance;
 		return instance;
@@ -34,8 +40,7 @@ private:
 	int killsNumber;
 	int deltaKills;
 
-	void addEnimyUnit(int, int);
-	void removeEnemyUnit(int);
 	void updateEnemyUnit(int, int);
+	
 };
 

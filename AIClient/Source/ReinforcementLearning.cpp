@@ -122,7 +122,7 @@ void ReinforcementLearning::stateAction(){
 	sim->stateAction();
 }
 
-int ReinforcementLearning::reward(){
+double ReinforcementLearning::reward(){
 	return sim->reward();
 }
 

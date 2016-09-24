@@ -25,7 +25,7 @@ public:
 
 	void initialize();
 	void stateAction();
-	int reward();
+	double reward();
 
 	void end();
 	void evaluate();

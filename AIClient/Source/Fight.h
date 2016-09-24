@@ -53,6 +53,7 @@ public:
 private:
 
 	bool updateHit();
+	Unit selecioneInimigo(int distance);
 
 	map<int, myUnit> positions;
 	Unit u;

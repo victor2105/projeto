@@ -30,58 +30,48 @@ void EnemiesHealth::reset(){
 }
 
 void EnemiesHealth::calculateDeltahHealth(){
-	/*
-	map<int, myUnit> * enemiesM = Fight::getInstance().getMyUnits();
-	for (map<int, myUnit>::iterator e = enemiesM->begin(); e != enemiesM->end(); e++){
-		int id = e->first;
-		if (mapIDHealth.count(id) > 0){ // id existe
-			delta += mapIDHealth[id] - e->second.hp;
-			updateEnemyUnit(id, e->second.hp);
-		}
-		else{
-			addEnimyUnit(id, e->second.hp);
-		}
-	}
 	/**/
-	Unitset enemies = u->getUnitsInRadius(200, BWAPI::Filter::IsEnemy);
+	Unitset enemies = u->getUnitsInRadius(10000, BWAPI::Filter::IsEnemy);
 	deltaKills = u->getKillCount() - killsNumber;
 	killsNumber = u->getKillCount();
 
 	for (auto & e : enemies){
-		int id = e->getID();
-		if (mapIDHealth.count(id) > 0){
-			delta += mapIDHealth[id] - e->getHitPoints();
-			if (e->getHitPoints() == 0)
-				removeEnemyUnit(id);
-			else
-				updateEnemyUnit(id, e->getHitPoints());
-		}
-		else{
-			addEnimyUnit(id, e->getHitPoints());
-		}
-	}
-
-	//delta += deltaKills * 20;
-	
+		updateEnemyUnit(e->getID() , e->getHitPoints());
+	}	
 	/**/
-
 }
 
 
 
-void EnemiesHealth::addEnimyUnit(int id, int health){
-	mapIDHealth[id] = health;
+void EnemiesHealth::unitShow(int id, int health){
+	updateEnemyUnit(id, health);
 }
 
 
 
-void EnemiesHealth::removeEnemyUnit(int id){
-	if (mapIDHealth.count(id) > 0)
+void EnemiesHealth::unitDestroy(int id){
+	if (mapIDHealth.count(id) > 0){
+		updateEnemyUnit(id, 0);
 		mapIDHealth.erase(id);
+	}
 }
 
+void EnemiesHealth::unitHide(int id, int health){
+	if (mapIDHealth.count(id) > 0){
+		//updateEnemyUnit(id, health);
+	}
+}
 
 
 void EnemiesHealth::updateEnemyUnit(int id, int health){
-	mapIDHealth[id] = health;
+	if (mapIDHealth.count(id) == 0){
+		mapIDHealth[id] = health;
+	}
+	else{
+		if (health < mapIDHealth[id]){
+			delta += mapIDHealth[id] - health;
+			cout << "Unidade: " << id << "Perdeu " << mapIDHealth[id] - health << "de vida." << endl;
+			mapIDHealth[id] = health;
+		}
+	}
 }

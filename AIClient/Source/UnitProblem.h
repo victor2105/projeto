@@ -131,9 +131,7 @@ public:
 	}
 
 
-	void setDamage(int d){
-		deltaEHealth = d;
-	}
+	
 
 private:
 
@@ -179,12 +177,14 @@ private:
 			health = u->getHitPoints();
 		}
 		deltaHealth = l_agent_health - health;
-
-
+		
+		// Update Enimy Health
+		deltaEHealth = EnemiesHealth::getInstance().getDeltaHealth();
+		EnemiesHealth::getInstance().clean();
 
 		// Weapon State
 		weapon = u->getGroundWeaponCooldown();
-		if (weapon <= 5){
+		if (weapon != 0){
 			weapon = 0;
 		} else {
 			weapon = 1;
@@ -213,9 +213,9 @@ private:
 		// Distance of Closest Enemy
 		distanceCE = 0; // Quatro possibilidades range 0, 1, 2 e 3
 
-		float distance = 9999.0;
+		double distance = 9999.0;
 		if (closestEnemy){
-			distance = u->getDistance(closestEnemy);
+			distance = u->getDistance(closestEnemy) + 0.0;
 		}
 
 		// distanceCE é a discretisação da distancia do inimigo mais próximo

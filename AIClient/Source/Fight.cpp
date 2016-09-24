@@ -30,67 +30,71 @@ void Fight::start(){
 	_finished = false;
 }
 
+Unit Fight::selecioneInimigo(int distance){
+
+	Unitset enemies = u->getUnitsInRadius(distance, BWAPI::Filter::IsEnemy);
+	Unit enemy = nullptr;
+
+	int health = 9999;
+	// Atacar inimigo com menos vida
+	for (auto &m : enemies)
+	{
+		if (m->getHitPoints() < health){
+			health = m->getHitPoints();
+			enemy = m;
+		}
+		updatePosition(m->getID(), m);
+		Broodwar->drawCircleMap(m->getPosition(), 15, BWAPI::Colors::Blue, false);
+	}
+
+		
+	return enemy;
+	
+
+}
 
 
 void Fight::update(){
 
 		// Ferificar condição de ataque
 		// Atualizar ataque
-		
+	
 
-		if (u->getKillCount() > lastKill) {
-			positions[_lastEnemySelectedID].hp = 0;
-			lastKill = u->getKillCount();
-		}
 
-		Unitset enemies = u->getUnitsInRadius(MaxRange * 32 * 2, BWAPI::Filter::IsEnemy);
-		Unit enemy = nullptr;
-		
-		int health = 9999;
-		// Atacar inimigo com menos vida
-		for (auto &m : enemies)
-		{
-			if (m->getHitPoints() < health){
-				health = m->getHitPoints();
-				enemy = m;
-			}
-			updatePosition(m->getID(), m);
-			Broodwar->drawCircleMap(m->getPosition(), 15, BWAPI::Colors::Blue, false);
-		}
+	if (u->getKillCount() > lastKill) {
+		positions[_lastEnemySelectedID].hp = 0;
+		lastKill = u->getKillCount();
+	}
 
-		if (_finished)
-			return;
 
-		if (enemy){
-			Broodwar->drawCircleMap(enemy->getPosition(), 15, BWAPI::Colors::Green, true);
-			u->attack(enemy);
-			_lastEnemySelectedID = enemy->getID();
-		}
-		else{
+	/* Busca inimigo com menor vida no em uma distancia de 120% do range de ataque */
+	Unit e = selecioneInimigo(MaxRange * 38);
+
+	if (e != nullptr){
+		u->attack(e);
+		lastSelected = e->getID();
+		return;
+	}
+
+	/* Busca inimigo com menor vida no em uma distancia de % do range de ataque */
+	e = selecioneInimigo(MaxRange * 32 * 2);
+
+	if (e != nullptr){
+		u->attack(e);
+		lastSelected = e->getID();
+		return;
+	}
 			
-			Unitset enemies2 = u->getUnitsInRadius(MaxRange * 32 * 2, BWAPI::Filter::IsEnemy);
-			Unit enemy2 = nullptr;
-
-
-			int health = 9999;
-			// Atacar inimigo com menos vida
-			for (auto &m : enemies2)
-			{
-				updatePosition(m->getID(), m);
-				Broodwar->drawCircleMap(m->getPosition(), 15, BWAPI::Colors::Blue, false);
-				Broodwar->drawTextMap(m->getPosition().x - 15, m->getPosition().y + 30, "id: %d\nHP: %d", m->getID(), m->getHitPoints());
-			}
-			
-			Position p = getClosestAlive(u->getPosition());		
-			if (p.x == 0 && p.y == 0){
-				p = getClosest(u->getPosition());
-				Broodwar->drawCircleMap(p, 15, BWAPI::Colors::Red, true);				
-			}
-			else {
-				Broodwar->drawCircleMap(p, 15, BWAPI::Colors::Red, false);
-			}
-			u->attack(p);
-		}
+	Position p = getClosestAlive(u->getPosition());		
+	if (p.x == 0 && p.y == 0){
+		p = getClosest(u->getPosition());
+		Broodwar->drawCircleMap(p, 15, BWAPI::Colors::Red, true);				
+	}
+	else {
+		Broodwar->drawCircleMap(p, 15, BWAPI::Colors::Red, false);
+	}
+	u->attack(p);
+		
 	
 }
 

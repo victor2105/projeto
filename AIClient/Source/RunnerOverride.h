@@ -152,8 +152,8 @@ public:
 	}
 
 
-	int reward(){
-		int rewardCount = 0;
+	double reward(){
+		double rewardCount = 0;
 		if (!agentAction)
 		{
 		}

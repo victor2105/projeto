@@ -74,7 +74,7 @@ int main(int argc, const char* argv[])
 	no artigo. Entretanto, a forma correta de reduzir o epsilon ainda é um grande mistério.
   */
   double epsilon = epsiloni;
-  int rewardCount;
+  double rewardCount;
 
 
   while(true)
@@ -97,13 +97,14 @@ int main(int argc, const char* argv[])
 		cout << pathRLFile << endl;
 	}
 
+	cout << "inicio" << endl;
+
 	Fight::getInstance().clear();
 	EnemiesHealth::getInstance().reset();
 	reatreatAction.clear();
 	ActionImp::getInstance().clear();
 
-	cout << "inicio" << endl;
-
+	
 	if (!reinforcement){
 		unit_problem = new UnitProblem<double>();
 		cout << "Epsilon: " << epsilon << endl;
@@ -219,7 +220,7 @@ int main(int argc, const char* argv[])
 				fw.writeDouble(epsilon);
 				fw.space();
 				cout << "final reward: " << rewardCount << endl;
-				fw.writeInt(rewardCount);
+				fw.writeDouble(rewardCount);
 				rewardCount = 0;
 				fw.end();
 				count--;
@@ -251,7 +252,7 @@ int main(int argc, const char* argv[])
 				fw.space();
 				fw.writeDouble(epsilon);
 				fw.space();
-				fw.writeInt(rewardCount);
+				fw.writeDouble(rewardCount);
 				rewardCount = 0;
 				fw.end();
 				count--;
@@ -319,9 +320,12 @@ int main(int argc, const char* argv[])
             break;
 		
           case EventType::UnitDestroy:
-            if (!Broodwar->isReplay())
-              Broodwar->sendText("A %s [%p] has been destroyed at (%d,%d)",e.getUnit()->getType().c_str(), e.getUnit(), e.getUnit()->getPosition().x, e.getUnit()->getPosition().y);
-            break;
+			  if (!Broodwar->isReplay()){
+				  Broodwar->sendText("A %s [%p] has been destroyed at (%d,%d)", e.getUnit()->getType().c_str(), e.getUnit(), e.getUnit()->getPosition().x, e.getUnit()->getPosition().y);
+				  
+				  EnemiesHealth::getInstance().unitDestroy(e.getUnit()->getID());
+			  }
+               break;
           case EventType::UnitMorph:
             if (!Broodwar->isReplay())
               Broodwar->sendText("A %s [%p] has been morphed at (%d,%d)",e.getUnit()->getType().c_str(), e.getUnit(), e.getUnit()->getPosition().x, e.getUnit()->getPosition().y);
@@ -339,12 +343,24 @@ int main(int argc, const char* argv[])
             }
             break;
           case EventType::UnitShow:
-            if (!Broodwar->isReplay())
-              Broodwar->sendText("A %s [%p] has been spotted at (%d,%d)", e.getUnit()->getType().c_str(), e.getUnit(), e.getUnit()->getPosition().x, e.getUnit()->getPosition().y);
-            break;
+			  if (!Broodwar->isReplay()){
+				  Broodwar->sendText("A %s [%p] has been spotted at (%d,%d)", e.getUnit()->getType().c_str(), e.getUnit(), e.getUnit()->getPosition().x, e.getUnit()->getPosition().y);
+				 // EnemiesHealth::getInstance().unitShow(e.getUnit()->getID(), e.getUnit()->getHitPoints());
+				 // Descobrir como identificar o dono da unidade
+			  }
+            
+			break;
           case EventType::UnitHide:
-            if (!Broodwar->isReplay())
-              Broodwar->sendText("A %s [%p] was last seen at (%d,%d)", e.getUnit()->getType().c_str(), e.getUnit(), e.getUnit()->getPosition().x, e.getUnit()->getPosition().y);
+			  if (!Broodwar->isReplay()){
+				  Broodwar->sendText("A %s [%p] was last seen at (%d,%d)", e.getUnit()->getType().c_str(), e.getUnit(), e.getUnit()->getPosition().x, e.getUnit()->getPosition().y);
+				  Unit u = e.getUnit();
+
+				  EnemiesHealth::getInstance().unitHide(u->getID(), u->getHitPoints());
+
+				  
+				  // Unidade fora do campo de visão
+			  }
+             
             break;
           case EventType::UnitRenegade:
             if (!Broodwar->isReplay())
@@ -374,11 +390,11 @@ int main(int argc, const char* argv[])
 		  if (Fight::getInstance()._canShot && !Fight::getInstance().hasFinished() && unit_experiment->getGroundWeaponCooldown() >= 20){
 			  Fight::getInstance().end();
 
-			  unit_problem->setDamage(20);
 		  }
 	  }
 	 
-
+	  // Calculando variação na vida dos inimigos
+	  // Essa função é de suma importancia para o funcionamento do aprendizado
 	  EnemiesHealth::getInstance().calculateDeltahHealth();
 
 
@@ -406,7 +422,6 @@ int main(int argc, const char* argv[])
 					  reatreatAction.execute(); // Deve vir sempre ante do teste
 					  if (reatreatAction.hasFinished()){
 						  //system("cls");
-						  unit_problem->setDamage(0);
 						  //unit_problem->setUnitHealth(unit_experiment->getHitPoints());
 						  
 						  ActionImp::getInstance().actionFinished = true;
