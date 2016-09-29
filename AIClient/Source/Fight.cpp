@@ -72,15 +72,19 @@ void Fight::update(){
 
 	if (e != nullptr){
 		u->attack(e);
+		Broodwar->drawCircleMap(e->getPosition(), 14, BWAPI::Colors::White, true);
+		Broodwar->drawTextMap(e->getPosition().x-12, e->getPosition().y - 20, "%i:%i", e->getID(), e->getHitPoints());
 		lastSelected = e->getID();
 		return;
 	}
 
-	/* Busca inimigo com menor vida no em uma distancia de % do range de ataque */
+	/* Busca inimigo com menor vida no em uma distancia de 200% do range de ataque */
 	e = selecioneInimigo(MaxRange * 32 * 2);
 
 	if (e != nullptr){
 		u->attack(e);
+		Broodwar->drawCircleMap(e->getPosition(), 14, BWAPI::Colors::Cyan, false);
+		Broodwar->drawTextMap(e->getPosition().x - 12, e->getPosition().y - 20, "%i:%i", e->getID(), e->getHitPoints());
 		lastSelected = e->getID();
 		return;
 	}

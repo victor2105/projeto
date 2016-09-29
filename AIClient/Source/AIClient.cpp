@@ -65,10 +65,11 @@ int main(int argc, const char* argv[])
   double lambda = file.getDouble("lambda");
   double gamma = file.getDouble("gamma");
 
-  double decreaseParam = file.getDouble("drecr");
+  double decreaseParam = file.getDouble("decr");
 
   double deltaE =  (epsilonf - epsiloni) / count;
   double porcentagem = deltaE / (epsilonf - epsiloni);
+  //double porcentagem = decreaseParam;
   /**
 	A ultima versão utilisando o deltaE foi um desastre. Sendo assim, acredito que essa foi a abordagem utilizada
 	no artigo. Entretanto, a forma correta de reduzir o epsilon ainda é um grande mistério.
@@ -112,6 +113,8 @@ int main(int argc, const char* argv[])
 		rewardCount = 0;
 	}
 	else{
+		// Testando desempenho da redução por porcentagem fixa
+		//epsilon = epsilon * (1.0-porcentagem);
 		epsilon += deltaE;
 		if (epsilon < 0)
 			epsilon = 0;
@@ -396,54 +399,61 @@ int main(int argc, const char* argv[])
 	  // Calculando variação na vida dos inimigos
 	  // Essa função é de suma importancia para o funcionamento do aprendizado
 	  EnemiesHealth::getInstance().calculateDeltahHealth();
-
+	  if (unit_experiment){
+		  Broodwar->drawTextScreen(300, 30, "Arma: %d", unit_problem->weapon);
+		  Broodwar->drawTextScreen(300, 60, "Distancia do inimigo mais proximo: %d", unit_problem->distanceCE);
+		  Broodwar->drawTextScreen(300, 90, "Numero de inimigos no range de ataque: %d", unit_problem->numberEUR);
+		  Broodwar->drawTextScreen(300, 120, "Status da vida: %d [%d]", unit_problem->healthState, unit_experiment->getHitPoints());
+	  }
 
 	  if (Broodwar->getFrameCount() % Broodwar->getLatencyFrames() == 0){
-		  // Este especificamente deve ser no dobro do range pois esta linha se refere a descobertas de tropas inimigas e não está relacionado ao range de ataque.
-		  Unitset enemies = unit_experiment->getUnitsInRadius(5 * 64, BWAPI::Filter::IsEnemy);
+		  
+		  
+		 
+	  }
+	  Unitset enemies = unit_experiment->getUnitsInRadius(5 * 64, BWAPI::Filter::IsEnemy);
 
-		  if (enemies.size() != 0){
-			  enemy_unit_discovered = true;
+	  if (enemies.size() != 0){
+		  enemy_unit_discovered = true;
+	  }
+	  if (enemy_unit_discovered){
+		  // Verificar se a ultima ação foi finalizada
+		  // Atacar
+		  // Recuar
+		  // se a proxima ação é atacar e hsasAttacked is false
+		  // se unit_experiment->getGroundWeaponCooldown() != 0 hasAttacked = trues
+
+		  if (!ActionImp::getInstance().actionFinished){
+			  /**/
+			  if (ActionImp::getInstance().action == ActionImp::FIGHT){
+				  Fight::getInstance().update();
+
+			  }/**/
+			  else  if (ActionImp::getInstance().action == ActionImp::REATREAT){
+				  reatreatAction.execute(); // Deve vir sempre ante do teste
+				  if (reatreatAction.hasFinished()){
+					  //system("cls");
+					  //unit_problem->setUnitHealth(unit_experiment->getHitPoints());
+
+					  ActionImp::getInstance().actionFinished = true;
+					  ActionImp::getInstance().action = ActionImp::NO_ACTION;
+				  }
+			  }/**/
 		  }
-		  if (enemy_unit_discovered){
-			  // Verificar se a ultima ação foi finalizada
-			  // Atacar
-			  // Recuar
-			  // se a proxima ação é atacar e hsasAttacked is false
-			  // se unit_experiment->getGroundWeaponCooldown() != 0 hasAttacked = trues
+		  if (ActionImp::getInstance().actionFinished){
+			  if (unit_problem){
+				  //reinforcement->run();
+				  reinforcement->reward();
 
-			  if (!ActionImp::getInstance().actionFinished){
-				  /**/
-				  if (ActionImp::getInstance().action == ActionImp::FIGHT){
-					  Fight::getInstance().update();
-					  
-				  }/**/
-				  else  if (ActionImp::getInstance().action == ActionImp::REATREAT){
-					  reatreatAction.execute(); // Deve vir sempre ante do teste
-					  if (reatreatAction.hasFinished()){
-						  //system("cls");
-						  //unit_problem->setUnitHealth(unit_experiment->getHitPoints());
-						  
-						  ActionImp::getInstance().actionFinished = true;
-						  ActionImp::getInstance().action = ActionImp::NO_ACTION;
-					  }
-				  }/**/
+				  reinforcement->stateAction();
 			  }
-			  if (ActionImp::getInstance().actionFinished){
-				  if (unit_problem){
-					  //reinforcement->run();
-					  reinforcement->reward();
-
-					  reinforcement->stateAction();
-				  }
-				  else{
-					  Broodwar << "unit problem = null" << std::endl;
-				  }
-			  }			
+			  else{
+				  Broodwar << "unit problem = null" << std::endl;
+			  }
 		  }
-		  else{
-			  explorerAgent.execute();
-		  }
+	  }
+	  else{
+		  explorerAgent.execute();
 	  }
 		  
 	  

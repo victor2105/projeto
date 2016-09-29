@@ -50,11 +50,6 @@ protected:
 	
 	BWAPI::Unit unit_experiment;
 
-	int weapon;	// Weapon Cooldown (is in cooldown or not/ 1 or 0)
-	int distanceCE;	// Distance to Closest Enemy
-	int numberEUR;	// Number of Enemy Units in Range
-	int health;			
-	int healthState; // Hit point - Health classified into one of {25,50,75,100}%
 	
 	int last_enemy_units_health;
 
@@ -71,6 +66,12 @@ protected:
 	
 
 public:
+	int weapon;	// Weapon Cooldown (is in cooldown or not/ 1 or 0)
+	int distanceCE;	// Distance to Closest Enemy
+	int numberEUR;	// Number of Enemy Units in Range
+	int health;
+	int healthState; // Hit point - Health classified into one of {25,50,75,100}%
+
 	bool hasWin;
 	bool hasLost;
 	UnitProblem(Random<T> * random = 0, BWAPI::Unit u = 0):
