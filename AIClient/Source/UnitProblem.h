@@ -38,7 +38,7 @@ using namespace BWAPI;
 #define REATREAT 1
 */
 
-#define nb_var 4
+#define nb_var 5
 #define nb_discret_action 2
 #define nb_continuous_action 1
 
@@ -69,13 +69,15 @@ public:
 	int weapon;	// Weapon Cooldown (is in cooldown or not/ 1 or 0)
 	int distanceCE;	// Distance to Closest Enemy
 	int numberEUR;	// Number of Enemy Units in Range
-	int health;
 	int healthState; // Hit point - Health classified into one of {25,50,75,100}%
+	int perigo;		 // Nível de ameaça no range;
+
+	int health;
 
 	bool hasWin;
 	bool hasLost;
 	UnitProblem(Random<T> * random = 0, BWAPI::Unit u = 0):
-		RLProblem<T>(random, nb_var/*4*/, nb_discret_action, nb_continuous_action), weapon(0), distanceCE(0),
+		RLProblem<T>(random, nb_var, nb_discret_action, nb_continuous_action), weapon(0), distanceCE(0),
 		numberEUR(0), health(0), unit_experiment(u)
 	{
 		for (int i = 0; i < Base::discreteActions->dimension(); i++)
@@ -161,6 +163,7 @@ private:
 	void getState() {
 		Unit u = unit_experiment;
 
+
 		/*
 			ToDo
 			Atualizar a vida da unidade
@@ -204,11 +207,25 @@ private:
 		Unitset enemies = u->getUnitsInRadius(MaxRange*TileSize*3, BWAPI::Filter::IsEnemy);
 		Unit closestEnemy = nullptr;
 		numberEUR = 0;
+
+
+
+		
+		perigo = 0;
 		for (auto &m : enemies) {
 			if (m->getDistance(u->getPosition()) <= MaxRange*TileSize)
 				numberEUR++;
 			if (!closestEnemy || u->getDistance(m) < u->getDistance(closestEnemy))
 				closestEnemy = m;
+			
+			// O nível de perigo é calculado baseado no tempo de recarga das armas dos inimigos
+			// Seja A uma arma inimiga e P(A) a funcao que determina o nível de perigo da arma A. Ou seja,
+			// caso a arma A esteja em recarga, o nivel de perigo P(A) = 0. Caso contrário P(A) = 1.
+
+			// Portanto, o nível de perigo total é igual ao S(P(Ai))para(i=1 a n). Onde n é o número de inimigos no range de ataque.
+			if (m->getGroundWeaponCooldown() < 3){
+				perigo++;
+			}
 		}
 
 		// Distance of Closest Enemy
@@ -234,22 +251,27 @@ private:
 			distanceCE = 3;
 		}
 
+
+
 	}
 
 	void updateTRStep()
 	{
 
+		// Testando impacto variaveis separadamente
 
 		getState();
 		Base::output->o_tp1->setEntry(0, weapon);
 		Base::output->o_tp1->setEntry(1, distanceCE);
 		Base::output->o_tp1->setEntry(2, numberEUR);
 		Base::output->o_tp1->setEntry(3, healthState);
+		Base::output->o_tp1->setEntry(4, perigo);
 
 		Base::output->observation_tp1->setEntry(0, weapon);
 		Base::output->observation_tp1->setEntry(1, distanceCE);
 		Base::output->observation_tp1->setEntry(2, numberEUR);
 		Base::output->observation_tp1->setEntry(3, healthState);
+		Base::output->observation_tp1->setEntry(4, perigo);
 	}
 
 	void draw()

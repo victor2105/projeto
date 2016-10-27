@@ -1,0 +1,111 @@
+Connecting...
+0 | 7832 | 0 | 941301859
+1 | 0 | 0 | 0
+2 | 0 | 0 | 0
+3 | 0 | 0 | 0
+4 | 0 | 0 | 0
+5 | 0 | 0 | 0
+6 | 0 | 0 | 0
+7 | 0 | 0 | 0
+Connected
+Connection successful
+waiting to enter match
+starting match!
+teste3.2.4.bin
+inicio
+Epsilon: 0.9
+altha: 4.995e-005
+gamma: 0.9
+lambda: 0.9
+Loading sarsa			...		Sarsa file does not exist
+Loading control			...		Control file does not exist
+reward: 0
+Action[0] = 0
+Action[1] = 0
+testando acoes
+reward: 0
+Action[0] = 0
+Action[1] = 0
+testando acoes
+recuar
+reward: 0
+Action[0] = 0
+Action[1] = 0
+testando acoes
+recuar
+reward: 0
+Action[0] = 0
+Action[1] = 0
+testando acoes
+atacar
+reward: 0
+Action[0] = 0
+Action[1] = 0
+testando acoes
+atacar
+Unidade: 3Perdeu 20de vida.
+reward: -10
+Action[0] = 0
+Action[1] = 0
+testando acoes
+recuar
+Unidade: 3Perdeu 20de vida.
+reward: -10
+Action[0] = -0.0129034
+Action[1] = -0.00764407
+best action0318F378
+recuar
+reward: 0
+Action[0] = -0.0238604
+Action[1] = -0.0143387
+testando acoes
+recuar
+reward: 0
+Action[0] = -0.023859
+Action[1] = -0.0143372
+testando acoes
+recuar
+reward: 0
+Action[0] = -0.0238579
+Action[1] = -0.0143351
+best action0318F378
+recuar
+reward: 0
+Action[0] = -0.0238569
+Action[1] = -0.0143326
+testando acoes
+recuar
+reward: 0
+Action[0] = -0.023856
+Action[1] = -0.0143299
+testando acoes
+atacar
+reward: 0
+Action[0] = -0.0238599
+Action[1] = -0.014345
+testando acoes
+recuar
+Unidade: 1Perdeu 20de vida.
+reward: 20
+Action[0] = -0.023849
+Action[1] = -0.0143257
+testando acoes
+recuar
+reward: 0
+Action[0] = -0.0066902
+Action[1] = 0.0252524
+testando acoes
+atacar
+reward: 0
+Action[0] = -0.00671349
+Action[1] = 0.0251851
+testando acoes
+atacar
+Unidade: 1Perdeu 20de vida.
+fim
+reward: 0
+Action[0] = 0
+Action[1] = 0
+testando acoes
+{0 [16 (0, 0, 0.0263891)]} capacity:1001
+## DenseVector (sum=0.0144661, l1Norm=0.0359267, maxNorm=0.00238813) persisted=teste3.2.4.bin

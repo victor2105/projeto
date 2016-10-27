@@ -101,7 +101,6 @@ namespace RLLib
 
       virtual T computeValueFunction(const Vector<T>* x) const
       {
-		  printf("RLAgent: computeValueFunction\n");
         return control->computeValueFunction(x);
       }
   };

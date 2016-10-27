@@ -114,8 +114,8 @@ int main(int argc, const char* argv[])
 	}
 	else{
 		// Testando desempenho da redução por porcentagem fixa
-		//epsilon = epsilon * (1.0-porcentagem);
-		epsilon += deltaE;
+		epsilon = epsilon * (1.0-porcentagem);
+		//epsilon += deltaE;
 		if (epsilon < 0)
 			epsilon = 0;
 		cout << "Epsilon: " << epsilon << endl;
@@ -177,7 +177,7 @@ int main(int argc, const char* argv[])
         else if ( u->getType().isResourceDepot() )
         {
           //if this is a center, tell it to build the appropiate type of worker
-          u->train(Broodwar->self()->getRace().getWorker());
+          //u->train(Broodwar->self()->getRace().getWorker());
 		}
 		else if (u->getType() == UnitTypes::Terran_Vulture){
 			unit_experiment = u;
@@ -188,7 +188,6 @@ int main(int argc, const char* argv[])
 				EnemiesHealth::getInstance().setUnit(u);
 				reatreatAction.setUnit(u);
 				explorerAgent.setUnit(u);
-
 			}
 		}
 
@@ -211,7 +210,7 @@ int main(int argc, const char* argv[])
 			if (e.isWinner()){
 				unit_problem->hasWin = true;
 				rewardCount += reinforcement->reward();
-				reinforcement->evaluate();
+				//reinforcement->evaluate();
 				//reinforcement->end();
 				Broodwar << "I won the game" << std::endl;
 				FileWriter fw;
@@ -242,7 +241,7 @@ int main(int argc, const char* argv[])
 			else{
 				unit_problem->hasLost = true;
 				rewardCount += reinforcement->reward();
-				reinforcement->evaluate();
+				//reinforcement->evaluate();
 
 				//reinforcement->end();
 				Broodwar << "I lost the game" << std::endl;
