@@ -48,23 +48,14 @@ ReinforcementLearning::ReinforcementLearning(UnitProblem <double> * nproblem,
 										);
 	path = pathControl;
 
-	// loading
-	cout << "Loading sarsa\t\t\t";
-	cout << "...\t\t";
-	string sarsaPath = "S" + path;
-	if (is_file_exist(sarsaPath.c_str())) {
-		sarsa->resurrect(sarsaPath.c_str());
-		cout << "[OK]\n";
-	}
-	else{
-		cout << "Sarsa file does not exist\n";
-	}
+	
 	control = new SarsaControl<double>(acting, toStateAction, sarsa);
 	cout << "Loading control\t\t\t";
 	cout << "...\t\t";
+	bool buscouArquivo = false;
 	if (is_file_exist(path.c_str())) {
+		buscouArquivo = true;
 		control->resurrect(pathControl.c_str());
-		cout << "[OK]\n";
 	}
 	else{
 		cout << "Control file does not exist\n";
@@ -74,6 +65,10 @@ ReinforcementLearning::ReinforcementLearning(UnitProblem <double> * nproblem,
 	
 
 	sim = new RunnerOverride<double>(agent, problem, 5000);
+	if (buscouArquivo){
+		string simEv = "simEV2" + path;
+		sim->computeValueFunction(simEv.c_str());
+	}
 
 	sim->setVerbose(true);
 }
@@ -99,15 +94,9 @@ void ReinforcementLearning::newEpsilon(double epsilon){
 }
 
 void ReinforcementLearning::evaluate(){
-	sim->computeValueFunction();
-	control->persist(path.c_str());
-	string sarsaPath = "S" + path;
-	sarsa->persist(sarsaPath.c_str());
-	Vector<double> *w = sarsa->weights();
-	string weightsPath = "W" + path;
-	w->persist(weightsPath.c_str());
-	
+	string simEv = "simEV" + path;
 
+	sim->computeValueFunction(simEv.c_str());
 }
 
 void ReinforcementLearning::run(){
@@ -127,7 +116,6 @@ double ReinforcementLearning::reward(){
 }
 
 void ReinforcementLearning::end(){
-	cout << "RLend" << endl;
 	control->persist(path.c_str());
 }
 

@@ -320,7 +320,7 @@ namespace RLLib
       void persist(const char* f) const
       {
 #if !defined(EMBEDDED_MODE)
-        std::ofstream of;
+        /*std::ofstream of;
         of.open(f, std::ofstream::out);
         if (of.is_open())
         {
@@ -342,12 +342,27 @@ namespace RLLib
           std::cout << std::endl;
         }
         else
-          std::cerr << "ERROR! (persist) file=" << f << std::endl;
+          std::cerr << "ERROR! (persist) file=" << f << std::endl;*/
+		  std::cout << "DENSE VECTOR" << endl;
+		  std::ofstream out(f);
+		  if (out.is_open()){
+			  out << 0 << " " << 1001;
+			  out << std::endl;
+			  for (int j = 0; j < capacity; j++){
+				  out << data[j] << " ";
+			  }
+			  out << std::endl;
+			  out.close();
+		  }
+		  else
+			  std::cerr << "ERROR! (persist) file=" << f << std::endl;
 #endif
       }
 
       void resurrect(const char* f)
       {
+
+		  std::cout << "USANDO DENSE VECTOR" << endl;
 #if !defined(EMBEDDED_MODE)
         std::ifstream ifs;
         ifs.open(f, std::ifstream::in);
@@ -355,11 +370,13 @@ namespace RLLib
         {
           // Read vector type;
           int vectorType;
-          Vector<T>::read(ifs, vectorType);
+          //Vector<T>::read(ifs, vectorType);
+		  ifs >> vectorType;
           ASSERT(vectorType == 0);
           // Read capacity
           int rcapacity;
-          Vector<T>::read(ifs, rcapacity);
+          //Vector<T>::read(ifs, rcapacity);
+		  ifs >> rcapacity;
           //ASSERT(capacity == rcapacity);
           delete[] data;
           capacity = rcapacity;
@@ -367,13 +384,16 @@ namespace RLLib
           clear();
           printf("vectorType=%i rcapacity=%i \n", vectorType, rcapacity);
           // Read data
-          for (int j = 0; j < capacity; j++)
-            Vector<T>::read(ifs, data[j]);
+		  for (int j = 0; j < capacity; j++){
+			  ifs >> data[j];
+		  }
+            //Vector<T>::read(ifs, data[j]);
           ifs.close();
           std::cout << "## DenseVector (sum=" << sum() << ", l1Norm=" << l1Norm() << ", maxNorm="
               << maxNorm() << ") resurrected=" << f;
           std::cout << std::endl;
-        }
+		  persist("compare.txt");
+		}
         else
         {
           std::cerr << "ERROR! (resurrect) file=" << f << std::endl;
@@ -649,6 +669,7 @@ namespace RLLib
 
       void persist(const char* f) const
       {
+		  std::cout << "USANDO SPARCE VECTOR" << endl;
 #if !defined(EMBEDDED_MODE)
         std::ofstream of;
         of.open(f, std::ofstream::out);
@@ -681,7 +702,8 @@ namespace RLLib
       }
 
       void resurrect(const char* f)
-      {
+	  {
+		  
 #if !defined(EMBEDDED_MODE)
         std::ifstream ifs;
         ifs.open(f, std::ifstream::in);

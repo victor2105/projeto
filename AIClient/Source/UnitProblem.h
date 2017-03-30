@@ -82,8 +82,7 @@ public:
 	{
 		for (int i = 0; i < Base::discreteActions->dimension(); i++)
 			Base::discreteActions->push_back(i, i);
-		// Not used
-		Base::discreteActions->push_back(0, 0.0);
+		//Base::discreteActions->push_back(0, 0.0);
 	}
 	
 	~UnitProblem(){
@@ -94,6 +93,7 @@ public:
 	void initialize() {
 		hasWin = false;
 		hasLost = false;
+		perigo = 0;
 		l_agent_health = 80;
 		deltaEHealth = 0;
 		health = 80;
@@ -134,7 +134,29 @@ public:
 	}
 
 
-	
+	void updateTRStep()
+	{
+		getState();
+
+		printEstado();
+
+		Base::output->o_tp1->setEntry(0, weapon);
+		Base::output->o_tp1->setEntry(1, distanceCE);
+		Base::output->o_tp1->setEntry(2, numberEUR);
+		Base::output->o_tp1->setEntry(3, healthState);
+		Base::output->o_tp1->setEntry(4, perigo);
+
+		Base::output->observation_tp1->setEntry(0, weapon);
+		Base::output->observation_tp1->setEntry(1, distanceCE);
+		Base::output->observation_tp1->setEntry(2, numberEUR);
+		Base::output->observation_tp1->setEntry(3, healthState);
+		Base::output->observation_tp1->setEntry(4, perigo);
+	}
+
+	void draw()
+	{
+
+	}
 
 private:
 
@@ -223,8 +245,11 @@ private:
 			// caso a arma A esteja em recarga, o nivel de perigo P(A) = 0. Caso contrário P(A) = 1.
 
 			// Portanto, o nível de perigo total é igual ao S(P(Ai))para(i=1 a n). Onde n é o número de inimigos no range de ataque.
-			if (m->getGroundWeaponCooldown() < 3){
-				perigo++;
+			
+			if (m->getDistance(u->getPosition()) <= 4 * TileSize + 8){
+				if (m->getGroundWeaponCooldown() == 0) {
+					perigo++;
+				}
 			}
 		}
 
@@ -255,29 +280,21 @@ private:
 
 	}
 
-	void updateTRStep()
-	{
+	void printEstado(){
+		cout <<"weapon:";
+		cout << weapon<<endl;
+		cout << "distanceCE:";
+		cout << distanceCE << endl;
+		cout << "numberEUR:";
+		cout << numberEUR << endl;
+		cout << "healthState:";
+		cout << healthState << endl;
+		cout << "perigo:";
+		cout << perigo << endl;
 
-		// Testando impacto variaveis separadamente
-
-		getState();
-		Base::output->o_tp1->setEntry(0, weapon);
-		Base::output->o_tp1->setEntry(1, distanceCE);
-		Base::output->o_tp1->setEntry(2, numberEUR);
-		Base::output->o_tp1->setEntry(3, healthState);
-		Base::output->o_tp1->setEntry(4, perigo);
-
-		Base::output->observation_tp1->setEntry(0, weapon);
-		Base::output->observation_tp1->setEntry(1, distanceCE);
-		Base::output->observation_tp1->setEntry(2, numberEUR);
-		Base::output->observation_tp1->setEntry(3, healthState);
-		Base::output->observation_tp1->setEntry(4, perigo);
 	}
 
-	void draw()
-	{
-		
-	}
+	
 
 	/*
 	*	@arguments (l_agent_health, health)

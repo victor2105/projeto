@@ -42,7 +42,7 @@ private:
 	Projector <double> * projector;
 	StateToStateAction <double> * toStateAction;
 	// Predictor
-	Sarsa<double> * sarsa;	// SARSA
+	Sarsa<double> * sarsa;			// SARSA
 	Trace<double> * e;				// TRACE
 	double alpha;
 	double gamma;

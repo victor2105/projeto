@@ -314,6 +314,57 @@ public:
 			out.close();
 		}
 
+		if (problem->dimension() == 4){
+			std::ofstream out(outFile);
+			PVector<T> x_t(4);
+
+			for (T w = 0; w <= 1; w++){
+				for (T dce = 0; dce <= 3; dce++){
+					for (T n = 0; n <= 6; n++){
+						for (T h = 0; h <= 3; h++){
+							x_t.at(0) = w;
+							x_t.at(1) = dce;
+							x_t.at(2) = n;
+							x_t.at(3) = h;
+							out << agent->computeValueFunction(&x_t) << " ";
+						}
+						out << std::endl;
+					}
+					out << std::endl;
+				}
+				out << std::endl;
+			}
+			out << std::endl;
+
+			out.close();
+			
+		}
+
+		if (problem->dimension() == 5){
+			std::ofstream out(outFile);
+			PVector<T> x_t(5);
+			for (T w = 0; w <= 1; w++){
+				for (T dce = 0; dce <= 3; dce++){
+					for (T n = 0; n <= 6; n++){
+						for (T h = 0; h <= 3; h++){
+							for (T p = 0; p <= 6; p++){
+								x_t.at(0) = w;
+								x_t.at(1) = dce;
+								x_t.at(2) = n;
+								x_t.at(3) = h;
+								out << agent->computeValueFunction(&x_t) << " ";
+							}
+							out << std::endl;
+						}
+						out << std::endl;
+					}
+					out << std::endl;
+				}
+				out << std::endl;
+			}
+			out << std::endl;
+		}
+
 		// draw
 		problem->draw();
 #endif

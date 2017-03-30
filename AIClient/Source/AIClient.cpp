@@ -54,7 +54,10 @@ int main(int argc, const char* argv[])
 
   bool enemy_unit_discovered = false;
   Unit unit_experiment = nullptr;
-  // Ler configuração de arquivo
+
+  /*
+	1 Leitura de configuração
+  */
   FileReader file("config.ini");
   string saveAt = file.getString("saveAt");
   double epsiloni = file.getDouble("epsiloni");
@@ -68,7 +71,7 @@ int main(int argc, const char* argv[])
   double decreaseParam = file.getDouble("decr");
 
   double deltaE =  (epsilonf - epsiloni) / count;
-  double porcentagem = deltaE / (epsilonf - epsiloni);
+  double porcentagem = 0.01;
   //double porcentagem = decreaseParam;
   /**
 	A ultima versão utilisando o deltaE foi um desastre. Sendo assim, acredito que essa foi a abordagem utilizada
@@ -105,32 +108,25 @@ int main(int argc, const char* argv[])
 	reatreatAction.clear();
 	ActionImp::getInstance().clear();
 
-	
+	/*
+		2 Inicialização e atualização das configurações do aprendizado
+		onde instanciamos, no primeiro episódio, as classes UnitProblem e ReinforcementLearning, passando
+		os devidos parâmetros ($\alhpa$, $\gamma$, $\lambda$, $\epsilon_i$, a instância do unitProblem
+		e o caminho para os arquivos de persistência de informação). Nos episódios seguintes, apenas
+		atualizamos o $\epsilon$ com seu novo valor.
+	*/
 	if (!reinforcement){
 		unit_problem = new UnitProblem<double>();
-		cout << "Epsilon: " << epsilon << endl;
 		reinforcement = new ReinforcementLearning(unit_problem, pathRLFile, epsilon, alpha,lambda,gamma);
-		rewardCount = 0;
 	}
 	else{
-		// Testando desempenho da redução por porcentagem fixa
 		epsilon = epsilon * (1.0-porcentagem);
-		//epsilon += deltaE;
-		if (epsilon < 0)
-			epsilon = 0;
-		cout << "Epsilon: " << epsilon << endl;
+		if (epsilon < 0) epsilon = 0;
 		reinforcement->newEpsilon(epsilon);
-		rewardCount = 0;
-		/*
-		reinforcement->end();
-		delete unit_problem;
-		delete reinforcement;
-
-		rewardCount = 0;
-		unit_problem = new UnitProblem<double>();
-		reinforcement = new ReinforcementLearning(unit_problem, pathRLFile, epsilon, 0.05, 0.9, 0.9);*/
 	}
 
+	cout << "Epsilon: " << epsilon << endl;
+	rewardCount = 0;
 
 
 	Broodwar << "The map is " << Broodwar->mapName() << ", a " << Broodwar->getStartLocations().size() << " player map" << std::endl;
@@ -398,11 +394,24 @@ int main(int argc, const char* argv[])
 	  // Calculando variação na vida dos inimigos
 	  // Essa função é de suma importancia para o funcionamento do aprendizado
 	  EnemiesHealth::getInstance().calculateDeltahHealth();
+
+
+	  // Mostar informação da unidade na tela do jogo.
 	  if (unit_experiment){
 		  Broodwar->drawTextScreen(300, 30, "Arma: %d", unit_problem->weapon);
 		  Broodwar->drawTextScreen(300, 60, "Distancia do inimigo mais proximo: %d", unit_problem->distanceCE);
 		  Broodwar->drawTextScreen(300, 90, "Numero de inimigos no range de ataque: %d", unit_problem->numberEUR);
 		  Broodwar->drawTextScreen(300, 120, "Status da vida: %d [%d]", unit_problem->healthState, unit_experiment->getHitPoints());
+		  Broodwar->drawTextScreen(300, 150, "Perigo: %d", unit_problem->perigo);
+		  
+
+
+		  Unitset enemies = unit_experiment->getUnitsInRadius(5*32 * 3, BWAPI::Filter::IsEnemy);
+
+		  for (auto &m : enemies) {
+			  Broodwar->drawCircleMap(m->getPosition(), 5 * 32, BWAPI::Colors::Blue, false);
+		  }
+
 	  }
 
 	  if (Broodwar->getFrameCount() % Broodwar->getLatencyFrames() == 0){
@@ -415,13 +424,20 @@ int main(int argc, const char* argv[])
 	  if (enemies.size() != 0){
 		  enemy_unit_discovered = true;
 	  }
+
+	  /*
+		Controle da Unidade
+		 Esta etapa é o coração do modulo AIClient. Ela é a responsável por alternar entre
+		 a execução das ações (Atacar e Recuar), e a execução do Agente de Aprendizado por
+		 reforço. Esta etapa é executada a cada quadro do jogo.
+	  */
 	  if (enemy_unit_discovered){
+
 		  // Verificar se a ultima ação foi finalizada
 		  // Atacar
 		  // Recuar
 		  // se a proxima ação é atacar e hsasAttacked is false
 		  // se unit_experiment->getGroundWeaponCooldown() != 0 hasAttacked = trues
-
 		  if (!ActionImp::getInstance().actionFinished){
 			  /**/
 			  if (ActionImp::getInstance().action == ActionImp::FIGHT){
