@@ -1,0 +1,27 @@
+﻿Build started 24/09/2016 15:29:26.
+     1>Project "C:\Users\Bruno Luno\Documents\projeto\AIClient\AIClient.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(388,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ExampleAIClient.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../include /I"/I[C:\Users\VictorHS\Desktop\bwapi-master\bwapi-master\Release_Binary\include]" /Zi /nologo /W3 /WX- /MP /Od /Oy- /D NOMINMAX /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\Fight.cpp
+         Fight.cpp
+     1>Source\Fight.cpp(179): warning C4305: 'initializing' : truncation from 'int' to 'float'
+     1>Source\Fight.cpp(186): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>Source\Fight.cpp(176): warning C4101: 'dist_min' : unreferenced local variable
+     1>Source\Fight.cpp(217): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Bruno Luno\Documents\projeto\Debug\AIClient.exe" /INCREMENTAL /NOLOGO ../lib/BWAPId.lib ../lib/BWAPIClientd.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Bruno Luno\Documents\projeto\Debug\AIClient.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Bruno Luno\Documents\projeto\Debug\AIClient.lib" /MACHINE:X86 /SAFESEH Debug\Source.obj
+         Debug\ActionImp.obj
+         Debug\EnemiesHealth.obj
+         Debug\AIClient.obj
+         Debug\ExplorerAgent.obj
+         Debug\Fight.obj
+         Debug\FileReader.obj
+         Debug\FileWriter.obj
+         Debug\Reatreat.obj
+         Debug\ReinforcementLearning.obj
+         AIClient.vcxproj -> C:\Users\Bruno Luno\Documents\projeto\Debug\AIClient.exe
+     1>Done Building Project "C:\Users\Bruno Luno\Documents\projeto\AIClient\AIClient.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.88

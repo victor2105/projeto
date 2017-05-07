@@ -38,7 +38,6 @@ using namespace BWAPI;
 #define REATREAT 1
 */
 
-#define nb_var 5
 #define nb_discret_action 2
 #define nb_continuous_action 1
 
@@ -56,6 +55,9 @@ protected:
 	int deltaEHealth;
 	int deltaHealth;
 	int l_agent_health;
+
+
+	int nb_var = 5;
 
 	int kills;
 	int l_kills;
@@ -76,10 +78,11 @@ public:
 
 	bool hasWin;
 	bool hasLost;
-	UnitProblem(Random<T> * random = 0, BWAPI::Unit u = 0):
+	UnitProblem(int nb_var = 5, Random<T> * random = 0, BWAPI::Unit u = 0) :
 		RLProblem<T>(random, nb_var, nb_discret_action, nb_continuous_action), weapon(0), distanceCE(0),
 		numberEUR(0), health(0), unit_experiment(u)
 	{
+		this->nb_var = nb_var;
 		for (int i = 0; i < Base::discreteActions->dimension(); i++)
 			Base::discreteActions->push_back(i, i);
 		//Base::discreteActions->push_back(0, 0.0);
@@ -119,7 +122,7 @@ public:
 	{
 		int reward = rewardFunction();
 		Broodwar->sendText("rewardR %d", reward);
-		cout << "reward: " << reward << endl;
+		//cout << "reward: " << reward << endl;
 
 		return reward;
 	}
@@ -144,13 +147,16 @@ public:
 		Base::output->o_tp1->setEntry(1, distanceCE);
 		Base::output->o_tp1->setEntry(2, numberEUR);
 		Base::output->o_tp1->setEntry(3, healthState);
-		Base::output->o_tp1->setEntry(4, perigo);
+
+		if (nb_var == 5)
+			Base::output->o_tp1->setEntry(4, perigo);
 
 		Base::output->observation_tp1->setEntry(0, weapon);
 		Base::output->observation_tp1->setEntry(1, distanceCE);
 		Base::output->observation_tp1->setEntry(2, numberEUR);
 		Base::output->observation_tp1->setEntry(3, healthState);
-		Base::output->observation_tp1->setEntry(4, perigo);
+		if (nb_var == 5)
+			Base::output->observation_tp1->setEntry(4, perigo);
 	}
 
 	void draw()
@@ -234,6 +240,7 @@ private:
 
 		
 		perigo = 0;
+		cout << "For(m : enemies)" << endl;
 		for (auto &m : enemies) {
 			if (m->getDistance(u->getPosition()) <= MaxRange*TileSize)
 				numberEUR++;
@@ -246,9 +253,10 @@ private:
 
 			// Portanto, o nível de perigo total é igual ao S(P(Ai))para(i=1 a n). Onde n é o número de inimigos no range de ataque.
 			
-			if (m->getDistance(u->getPosition()) <= 4 * TileSize + 8){
+			if (m->getDistance(u->getPosition()) <= MaxRange*TileSize){
 				if (m->getGroundWeaponCooldown() == 0) {
 					perigo++;
+					cout << "\tPerigo:" << perigo << endl;
 				}
 			}
 		}

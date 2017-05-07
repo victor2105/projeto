@@ -1,3 +1,0 @@
-2
-cd weapon_distance
-AIClient.exe>saida.txt

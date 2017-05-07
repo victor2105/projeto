@@ -58,8 +58,18 @@ int main(int argc, const char* argv[])
   /*
 	1 Leitura de configuração
   */
-  FileReader file("config.ini");
-  string saveAt = file.getString("saveAt");
+
+  string fileName = "";
+  if (argc > 1){
+	  fileName = argv[1];
+  }
+  else{
+	  return 0;
+  }
+
+
+  FileReader file(fileName.c_str());
+  string saveAt = "results"+fileName;
   double epsiloni = file.getDouble("epsiloni");
   double epsilonf = file.getDouble("epsilonf");
   double count = file.getDouble("count");
@@ -69,16 +79,18 @@ int main(int argc, const char* argv[])
   double gamma = file.getDouble("gamma");
 
   double decreaseParam = file.getDouble("decr");
+  int boLinear = file.getInt("boLinear");
+  int boPerigo = file.getInt("boPerigo");
 
   double deltaE =  (epsilonf - epsiloni) / count;
-  double porcentagem = 0.01;
-  //double porcentagem = decreaseParam;
+  //double porcentagem = 0.01;
+  double porcentagem = decreaseParam;
   /**
 	A ultima versão utilisando o deltaE foi um desastre. Sendo assim, acredito que essa foi a abordagem utilizada
 	no artigo. Entretanto, a forma correta de reduzir o epsilon ainda é um grande mistério.
   */
   double epsilon = epsiloni;
-  double rewardCount;
+  double rewardCount = 0;
 
 
   while(true)
@@ -96,10 +108,9 @@ int main(int argc, const char* argv[])
     std::cout << "starting match!" << std::endl;
 	// O epsilon vai variar de 0.9 até 0 em um periodo de 1000 episódios
 	string pathRLFile = "rl.txt";
-	if (file.good() && file.count("rlFile") != 0){
-		pathRLFile = file.getString("rlFile");
-		cout << pathRLFile << endl;
-	}
+	
+	pathRLFile = "ctrl"+fileName;
+	cout << pathRLFile << endl;	
 
 	cout << "inicio" << endl;
 
@@ -116,11 +127,19 @@ int main(int argc, const char* argv[])
 		atualizamos o $\epsilon$ com seu novo valor.
 	*/
 	if (!reinforcement){
-		unit_problem = new UnitProblem<double>();
+		if (boPerigo == 1)
+			unit_problem = new UnitProblem<double>(5);
+		else
+			unit_problem = new UnitProblem<double>(4);
 		reinforcement = new ReinforcementLearning(unit_problem, pathRLFile, epsilon, alpha,lambda,gamma);
 	}
 	else{
-		epsilon = epsilon * (1.0-porcentagem);
+		if (boLinear == 1){
+			epsilon += deltaE;
+		}
+		else{
+			epsilon = epsilon * (1.0 - porcentagem);
+		}
 		if (epsilon < 0) epsilon = 0;
 		reinforcement->newEpsilon(epsilon);
 	}
@@ -403,13 +422,24 @@ int main(int argc, const char* argv[])
 		  Broodwar->drawTextScreen(300, 90, "Numero de inimigos no range de ataque: %d", unit_problem->numberEUR);
 		  Broodwar->drawTextScreen(300, 120, "Status da vida: %d [%d]", unit_problem->healthState, unit_experiment->getHitPoints());
 		  Broodwar->drawTextScreen(300, 150, "Perigo: %d", unit_problem->perigo);
-		  
 
+		  if (unit_experiment->getGroundWeaponCooldown() != 0){
+			  Broodwar->drawCircleMap(unit_experiment->getPosition(), 5 * 32, BWAPI::Colors::Red, false);
+		  }
+		  else{
+			  Broodwar->drawCircleMap(unit_experiment->getPosition(), 5 * 32, BWAPI::Colors::Green, false);
+		  }
 
 		  Unitset enemies = unit_experiment->getUnitsInRadius(5*32 * 3, BWAPI::Filter::IsEnemy);
 
 		  for (auto &m : enemies) {
-			  Broodwar->drawCircleMap(m->getPosition(), 5 * 32, BWAPI::Colors::Blue, false);
+			  if (m->getGroundWeaponCooldown() != 0){
+				  Broodwar->drawCircleMap(m->getPosition(), 5 * 32, BWAPI::Colors::Red, false);
+			  }
+			  else{
+
+				  Broodwar->drawCircleMap(m->getPosition(), 5 * 32, BWAPI::Colors::Green, false);
+			  }
 		  }
 
 	  }

@@ -107,17 +107,17 @@ public:
 #if !defined(EMBEDDED_MODE)
 		T xbar = std::accumulate(statistics.begin(), statistics.end(), 0.0f)
 			/ (T(statistics.size()));
-		std::cout << std::endl;
-		std::cout << "## Average: length=" << xbar;
-		std::cout << std::endl;
+		//std::cout << std::endl;
+		//std::cout << "## Average: length=" << xbar;
+		//std::cout << std::endl;
 		T sigmabar = T(0);
 		for (typename std::vector<T>::const_iterator x = statistics.begin(); x != statistics.end();
 			++x)
 			sigmabar += pow((*x - xbar), 2);
 		sigmabar = sqrt(sigmabar) / T(statistics.size());
 		T se/*standard error*/ = sigmabar / sqrt(T(statistics.size()));
-		std::cout << "## (+- 95%) =" << (se * 2);
-		std::cout << std::endl;
+		//std::cout << "## (+- 95%) =" << (se * 2);
+		//std::cout << std::endl;
 		statistics.clear();
 #endif
 	}
@@ -185,10 +185,10 @@ public:
 			if (verbose)
 			{
 				T averageTimePerStep = totalTimeInMilliseconds / timeStep;
-				std::cout << "{" << nbEpisodeDone << " [" << timeStep << " (" << episodeR << ", "
-					<< episodeZ << ", " << averageTimePerStep << ")]} ";
+				//std::cout << "{" << nbEpisodeDone << " [" << timeStep << " (" << episodeR << ", "
+				//	<< episodeZ << ", " << averageTimePerStep << ")]} ";
 				//std::cout << ".";
-				std::cout.flush();
+				//std::cout.flush();
 			}
 
 			if (enableStatistics)
@@ -232,7 +232,7 @@ public:
 	void runEvaluate(const int& nbEpisodes = 20, const int& nbRuns = 1)
 	{
 #if !defined(EMBEDDED_MODE)
-		std::cout << "\n@@ Evaluate=" << enableTestEpisodesAfterEachRun << std::endl;
+		//std::cout << "\n@@ Evaluate=" << enableTestEpisodesAfterEachRun << std::endl;
 #endif
 		RLAgent<T>* evaluateAgent = new ControlAgent<T>(agent->getRLAgent());
 		RunnerOverride<T>* runner = new RunnerOverride<T>(evaluateAgent, problem, maxEpisodeTimeSteps,
@@ -352,6 +352,7 @@ public:
 								x_t.at(1) = dce;
 								x_t.at(2) = n;
 								x_t.at(3) = h;
+								x_t.at(4) = p;
 								out << agent->computeValueFunction(&x_t) << " ";
 							}
 							out << std::endl;
@@ -363,6 +364,7 @@ public:
 				out << std::endl;
 			}
 			out << std::endl;
+			out.close();
 		}
 
 		// draw
